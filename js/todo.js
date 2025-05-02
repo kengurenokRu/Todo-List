@@ -5,7 +5,7 @@ export const todo = () => {
     const todoTitle = document.querySelector('.todo__title');
     const todoBtn = document.querySelector('.todo__btn');
     const list = document.querySelector('.todo__list');
-
+    const todo__count = document.querySelector('.todo__count');
 
     const base = {
         init() {
@@ -14,11 +14,10 @@ export const todo = () => {
 
         employee: 'Петров Сергей Иванович',
         todo: [],
-        check(id) {
-            for (let i = 0; i < this.todo.length; i++) {
-                if (this.todo[i].id === id) {
-                    this.todo[i].ready = true;
-                }
+        delTodo(id) {
+            const index = this.todo.findIndex(todo => todo.id === id);
+            if (index !== -1) {
+                this.todo.splice(index, 1);
             }
             this.setTodoLS();
         },
@@ -32,6 +31,14 @@ export const todo = () => {
             this.todo.push(todo);
             this.setTodoLS();
             return todo;
+        },
+        check(id) {
+            for (let i = 0; i < this.todo.length; i++) {
+                if (this.todo[i].id === id) {
+                    this.todo[i].ready = true;
+                }
+            }
+            this.setTodoLS();
         },
 
         getTodoLS() {
@@ -70,8 +77,12 @@ export const todo = () => {
                 type="button"
                 data-id="${id}">
                 ✔</button>` : ''}
-    </article>
-            `;
+                <button 
+                class="post__delete" 
+                type="button"
+                data-id="del-${id}">
+                X</button>
+    </article> `;
         const li = document.createElement('li');
         li.classList.add('todo__list-item');
         li.innerHTML = todoItem;
@@ -84,10 +95,11 @@ export const todo = () => {
             const todoLi = createTodo(base.todo[i]);
             list.append(todoLi);
         }
+        todo__count.innerText = base.todo.length;
     };
 
     const checkTodo = event => {
-        const btn = event.target.closest('.post__ready');
+        let btn = event.target.closest('.post__ready');
         if (btn) {
             const post = btn.closest('.post');
             btn.remove();
@@ -95,6 +107,16 @@ export const todo = () => {
             const id = btn.dataset.id;
             base.check(id);
         }
+        else {
+            btn = event.target.closest('.post__delete');
+            if (btn) {
+                const post = btn.closest('.post');
+                const id = btn.dataset.id.slice(4);
+                base.delTodo(id);
+                post.remove();
+            }
+        }
+        todo__count.innerText = base.todo.length;
     };
 
     todoForm.addEventListener('submit', addTodo);

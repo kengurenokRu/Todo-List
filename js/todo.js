@@ -53,6 +53,10 @@ export const todo = () => {
         }
     }
 
+    const addCountTodo = () =>{
+        todo__count.innerText = base.todo.length;
+    }
+
     const addTodo = (event) => {
         event.preventDefault();
 
@@ -63,6 +67,7 @@ export const todo = () => {
         const todoLi = createTodo(objTodo);
 
         list.append(todoLi);
+        addCountTodo();
         todoForm.reset();
     };
 
@@ -95,7 +100,7 @@ export const todo = () => {
             const todoLi = createTodo(base.todo[i]);
             list.append(todoLi);
         }
-        todo__count.innerText = base.todo.length;
+        addCountTodo();
     };
 
     const checkTodo = event => {
@@ -114,9 +119,10 @@ export const todo = () => {
                 const id = btn.dataset.id.slice(4);
                 base.delTodo(id);
                 post.remove();
+                addCountTodo();
             }
         }
-        todo__count.innerText = base.todo.length;
+        
     };
 
     todoForm.addEventListener('submit', addTodo);
